@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\LoginFormRequest;
 
 class UserController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * ログイン画面表示
      */
     public function index()
     {
@@ -15,11 +16,12 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * @param App\Http\Requests\LoginFormRequest
+     * request
      */
-    public function create()
+    public function login(LoginFormRequest $request)
     {
-        //
+        dd($request->all());
     }
 
     /**
