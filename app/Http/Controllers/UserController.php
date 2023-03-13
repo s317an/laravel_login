@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginFormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -12,55 +13,47 @@ class UserController extends Controller
      */
     public function index()
     {
-        return view('login_form');
+        return view('login.login_form');
     }
 
     /**
+     * ログイン確認/ホーム画面表示
      * @param App\Http\Requests\LoginFormRequest
      * request
      */
     public function login(LoginFormRequest $request)
     {
-        dd($request->all());
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            //成功した場合ホーム画面表示
+            return redirect()->route('home')->with('success','ログインが成功しました。');
+        }
+
+        return back()->withErrors([
+            'danger' => 'メールアドレスかパスワードに誤りがあります。',
+        ]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * ユーザーをアプリケーションからログアウトさせる
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function logout(Request $request)
     {
-        //
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()->route('index')->with('danger','ログアウトしました。');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

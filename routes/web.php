@@ -13,6 +13,23 @@ use App\Http\Controllers\UserController;
 |
 */
 
-Route::get('/',[UserController::class,'index'])->name('index');
+Route::middleware(['guest'])->group(function () {
+    //ログイン画面
+    Route::get('/',[UserController::class,'index'])->name('index');
+    //ログイン処理
+    Route::post('login',[UserController::class,'login'])->name('login');
+});
 
-Route::post('/login',[UserController::class,'login'])->name('login');
+
+
+Route::middleware(['auth'])->group(function () {
+    //ホーム画面
+    Route::get('home',function(){
+        return view('login.home');
+    })->name('home');
+    
+    //ログアウト処理
+    Route::post('logout',[UserController::class,'logout'])->name('logout');
+});
+
+
